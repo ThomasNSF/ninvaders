@@ -8,8 +8,8 @@ namespace {
 
 void createSingletones()
 {
-    GameManager::createInstance();
-    UIManager::createInstance();
+    GameManager::instance().initialize();
+    UIManager::instance();
 }
 
 void removeSingletones()
@@ -24,8 +24,9 @@ int main(int argc, char** argv)
 {
     try {
         createSingletones();
-        GameManager* gameMgr = GameManager::getInstance();
-        gameMgr->setup(argc, argv);
+        GameManager::ptr_t gameMgr = GameManager::getInstance();
+        if (!gameMgr->setup(argc, argv))
+            return 0;
 
         do {
             gameMgr->readInput();

@@ -87,7 +87,7 @@ bool Player::moveMissile()
         } else {
             m_uiMgr->playerMissileDisplay(m_missileX, m_missileY);
         }
-        GameTable* table = GameTable::getInstance();
+        GameTable::ptr_t table = GameTable::getInstance();
         return table->hitCheck(this);
     }
 }

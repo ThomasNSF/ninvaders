@@ -2,7 +2,7 @@
 #include "UIManager.h"
 #include "GameTable.h"
 
-Counter::Counter(GameManager* mgr)
+Counter::Counter(GameManager *mgr)
     : m_mgr(mgr)
 {
     unsigned m_aliensMove     = 0;

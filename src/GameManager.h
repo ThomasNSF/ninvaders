@@ -1,26 +1,30 @@
 #pragma once
 
-class UIManager;
-class GameTable;
-class ConfigurationManager;
+#include <boost/enable_shared_from_this.hpp>
+#include "ConfigurationManager.h"
+#include "GameTable.h"
+#include "UIManager.h"
 class Counter;
 
-class GameManager
+class GameManager: public Singleton<GameManager>,
+    public std::enable_shared_from_this<GameManager>
 {
+    SINGLETON(GameManager);
+
 public:
-    static GameManager* getInstance();
-    static GameManager* createInstance();
-    static void removeInstance();
+    typedef std::shared_ptr<GameManager> ptr_t;
+
 
     static void staticHandler(int)
     {
-        s_instance->handleTimer();
+        instance().handleTimer();
     }
 
 public:
     GameManager();
     ~GameManager();
-    void setup(int argc, char** argv);
+    void initialize();
+    bool setup(int argc, char** argv);
 
 private:
     GameManager(const GameManager& other) = delete;
@@ -37,7 +41,7 @@ private:
     void printVersion() const;
     void printUsage() const;
 
-    void parseCommandLine(int argc, char** argv);
+    bool parseCommandLine(int argc, char** argv);
     void setupTimer();
     void handleTimer();
 
@@ -48,15 +52,12 @@ private:
     void finish(int);
 
 private:
-    UIManager* m_uiMgr;
-    ConfigurationManager* m_confMgr;
-    GameTable* m_gameTable;
+    UIManager::ptr_t m_uiMgr;
+    ConfigurationManager::ptr_t m_confMgr;
+    GameTable::ptr_t m_gameTable;
 
     friend class Counter;
     Counter* m_counter;
-
-private:
-    static GameManager* s_instance;
 
 };
 

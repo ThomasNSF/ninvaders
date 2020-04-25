@@ -12,7 +12,7 @@
 class Counter
 {
 public:
-    Counter(GameManager* mgr);
+    Counter(GameManager *mgr);
 
     /**
      * @brief reset
@@ -65,5 +65,5 @@ private:
     unsigned m_gameOver;
 
 private:
-    GameManager* m_mgr;
+    GameManager * m_mgr;
 };

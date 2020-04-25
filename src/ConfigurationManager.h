@@ -9,26 +9,21 @@
  * @author Levon ghukasyan
  */
 
-class ConfigurationManager
+class ConfigurationManager: public Singleton<ConfigurationManager>
 {
-public:
-    /**
-     * @brief create the singleton object if it is not exist and returns this object
-     *        if it is exist returns it.
-     */
-    static ConfigurationManager* getInstance();
+    SINGLETON(ConfigurationManager);
 
-    /**
-     * @brief removes the singleton object
-     */
-    static void removeInstance();
+public:
+    static const int DEFAULT_MAX_LIVES = 3;
+
+    typedef std::shared_ptr<ConfigurationManager> ptr_t;
 
     void reset()
     {
-        m_weite   = 0;
-        m_score = 0;
-        m_live  = 3;
-        m_level    = 0;
+        m_weite      = 0;
+        m_score      = 0;
+        m_live       = m_maxLives;
+        m_level      = 0;
         m_skillLevel = 1;
     }
 
@@ -112,6 +107,11 @@ public:
     {
         m_live = live;
     }
+
+    inline void resetLive()
+    {
+        m_live = m_maxLives;
+    }
     ///}
 
     ///@brief mode set/get
@@ -127,13 +127,24 @@ public:
         m_mode = mode;
     }
     ///}
-
-private:
+    
+public:
     /**
      * @brief Default constructor
      */
-    ConfigurationManager() = default;
+    ConfigurationManager():
+        m_numships(0),
+        m_weite(0),
+        m_level(0),
+        m_skillLevel(0),
+        m_score(0),
+        m_live(DEFAULT_MAX_LIVES),
+        m_maxLives(DEFAULT_MAX_LIVES),
+        m_mode(Mode::PAUSE)
+    {}
 
+    ~ConfigurationManager();
+private:
     /**
      * @brief Copy constructor
      */
@@ -147,10 +158,7 @@ private:
     /**
      * @brief Destructor
      */
-    ~ConfigurationManager();
 
-private:
-    static ConfigurationManager* s_instance;
 
 private:
     int  m_numships;
@@ -159,5 +167,6 @@ private:
     int  m_skillLevel;
     int  m_score;
     int  m_live;
+    int  m_maxLives;
     Mode m_mode;
 };

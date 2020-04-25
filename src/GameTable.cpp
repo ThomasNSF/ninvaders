@@ -8,27 +8,6 @@
 #include "common.h"
 #include <iostream>
 
-GameTable* GameTable::s_instance = nullptr;
-
-GameTable* GameTable::getInstance()
-{
-    return createInstance();
-}
-
-GameTable* GameTable::createInstance()
-{
-    if (nullptr == s_instance) {
-        s_instance = new GameTable();
-    }
-    return s_instance;
-}
-
-void GameTable::removeInstance()
-{
-    delete s_instance;
-    s_instance = nullptr;
-}
-
 GameTable::GameTable()
     : m_ufo(new UFO())
     , m_player(new Player())

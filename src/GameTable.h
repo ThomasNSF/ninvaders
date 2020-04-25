@@ -4,22 +4,11 @@
 #include "UFO.h"
 #include "Player.h"
 
-class GameTable
+class GameTable: public Singleton<GameTable>
 {
-
+    SINGLETON(GameTable);
 public:
-    /*
-     * @brief create the singleton object if it is not exist and returns this object
-     * \ if it is exist returns it.
-     */
-    static GameTable* getInstance();
-
-    static GameTable* createInstance();
-
-    /*
-     * @brief removes the singleton object
-     */
-    static void removeInstance();
+    typedef std::shared_ptr<GameTable> ptr_t;
 
 public:
     Player* getPlayer();
@@ -38,12 +27,18 @@ private:
     bool handleHit();
     void handleUFO();
 
-private:
+public:
     /*
      * @brief Default constructor
      */
     GameTable();
 
+    /*
+     * @brief Destructor
+     */
+    ~GameTable();
+
+private:
     /*
      * @brief Copy constructor
      */
@@ -54,19 +49,12 @@ private:
      */
     GameTable& operator=(const GameTable&) = delete;
 
-    /*
-     * @brief Destructor
-     */
-    ~GameTable();
-
-private:
-    static GameTable* s_instance;
 
 private:
     UFO*    m_ufo;
     Player* m_player;
     Aliens* m_aliens;
 
-    UIManager* m_uiMgr;
-    ConfigurationManager* m_confMgr;
+    UIManager::ptr_t    m_uiMgr;
+    ConfigurationManager::ptr_t m_confMgr;
 };

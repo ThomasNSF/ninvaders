@@ -4,27 +4,6 @@
 
 #include "UIManager.h"
 
-UIManager* UIManager::s_instance = nullptr;
-
-UIManager* UIManager::getInstance()
-{
-    return createInstance();
-}
-
-UIManager* UIManager::createInstance()
-{
-    if (s_instance == nullptr) {
-        s_instance = new UIManager();
-    }
-    return s_instance;
-}
-
-void UIManager::removeInstance()
-{
-    delete s_instance;
-    s_instance = nullptr;
-}
-
 void UIManager::prepearInit()
 {
     signal(SIGINT, finish);

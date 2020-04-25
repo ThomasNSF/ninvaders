@@ -7,9 +7,8 @@
  * @author Levon Ghukasyan
  */
 
-class UIManager;
-class ConfigurationManager;
-
+#include "ConfigurationManager.h"
+#include "UIManager.h"
 
 class Animate
 {
@@ -34,7 +33,7 @@ protected:
     int m_posX;
     int m_posY;
 
-    UIManager* m_uiMgr;
+    UIManager::ptr_t m_uiMgr;
 };
 
 class MovableAnimate : public Animate
@@ -49,5 +48,5 @@ protected:
     int m_speed;
 
 protected:
-    ConfigurationManager* m_confMgr;
+    ConfigurationManager::ptr_t m_confMgr;
 };

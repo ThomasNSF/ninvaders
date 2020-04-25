@@ -1,6 +1,9 @@
 #include <stdexcept>
 #include <cstdio>
+#include <iostream>
+#ifndef _MSC_VER
 #include <sys/time.h>
+#endif
 
 #include "ConfigurationManager.h"
 
@@ -11,53 +14,40 @@
 #include "GameTable.h"
 #include "Counter.h"
 
-GameManager* GameManager::s_instance = nullptr;
+#include <boost/program_options.hpp>
 
 GameManager::GameManager()
 {
-    m_uiMgr = UIManager::getInstance();
-    m_confMgr = ConfigurationManager::getInstance();
-    m_gameTable = GameTable::createInstance();
-    m_counter = new Counter(this);
 }
 
 GameManager::~GameManager()
 {
-    GameTable::removeInstance();
     delete m_counter;
 }
 
-GameManager* GameManager::getInstance()
+void GameManager::initialize()
 {
-    return createInstance();
+    m_uiMgr = UIManager::getInstance();
+    m_confMgr = ConfigurationManager::getInstance();
+    m_gameTable = GameTable::getInstance();
+    m_counter = new Counter(this);
 }
 
-GameManager* GameManager::createInstance()
-{
-    if (s_instance == nullptr) {
-        s_instance = new GameManager();
-    }
-    return s_instance;
-}
-
-void GameManager::removeInstance()
-{
-    delete s_instance;
-    s_instance = nullptr;
-}
-
-void GameManager::setup(int argc, char** argv)
+bool GameManager::setup(int argc, char** argv)
 {
     m_confMgr->reset();
 
-    parseCommandLine(argc, argv);
+    if (!parseCommandLine(argc, argv))
+        return false;
     UIManager::getInstance()->setupUI();
     setupTimer();
 	m_confMgr->setMode(Mode::HIGHSCORE);
+    return true;
 }
 
 void GameManager::setupTimer()
 {
+#ifndef _MSC_VER
     struct itimerval myTimer;
     struct sigaction myAction;
     myTimer.it_value.tv_sec = 0;
@@ -69,6 +59,7 @@ void GameManager::setupTimer()
     myAction.sa_handler = &GameManager::staticHandler;
     myAction.sa_flags = SA_RESTART;
     sigaction(SIGALRM, &myAction, NULL);
+#endif
 }
 
 void GameManager::handleTimer()
@@ -103,8 +94,9 @@ void GameManager::handleTimer()
     }
 }
 
-void GameManager::parseCommandLine(int argc, char** argv)
+bool GameManager::parseCommandLine(int argc, char** argv)
 {
+#if 0
     if (argc == 3 && argv[1] == "-l") {
         if (argv[2][0] >= '0' && argv[2][0] <= '9') {
             m_confMgr->setSkillLevel(argv[2][0] - 48);
@@ -120,6 +112,45 @@ void GameManager::parseCommandLine(int argc, char** argv)
         printUsage();
         throw std::invalid_argument("Command line arguments are wrong");
     }
+#else
+    namespace bpo = boost::program_options;
+    bpo::options_description opts("Allowed Options");
+    int skill_level(0);
+    int frames_per_second(0);
+    int lives(0);
+    bool single_play(false);
+
+    opts.add_options()
+        ("level,l", bpo::value<int>(&skill_level)->default_value(1),
+            "Set skill level")
+        ("help,h", "Print game info")
+        ("fps,f", bpo::value<int>(&frames_per_second)->default_value(FPS),
+            "Set frames per second")
+        ("lives", bpo::value<int>(&lives)->default_value(3),
+            "Set initial number of lives");
+        ("single-play", bpo::value<bool>(&single_play)->default_value(false),
+            "Single play then exit");
+    try
+    {
+        bpo::variables_map vm;
+        bpo::store(bpo::parse_command_line(argc, argv, opts), vm);
+        bpo::notify(vm);
+
+        if (vm.count("help"))
+        {
+            std::cerr << opts << std::endl;
+            return false;
+        }
+    }
+    catch (const std::exception &wut)
+    {
+        std::cerr << wut.what() << std::endl;
+        std::cerr << opts << std::endl;
+        throw;
+    }
+
+    return true;
+#endif
 }
 
 void GameManager::drawscore()

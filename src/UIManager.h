@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ncurses.h>
+#include <curses.h>
 #include <signal.h>
 
 #include "common.h"
@@ -10,19 +10,15 @@
  * @author Levon Ghukasyan
  **/
 
-class UIManager
+class UIManager: public Singleton<UIManager>
 {
-    ///@brief static functionality
-    ///@{
+    SINGLETON(UIManager);
+
 public:
-    static UIManager* getInstance();
-    static UIManager* createInstance();
-    static void removeInstance();
-    ///@}
+    typedef std::shared_ptr<UIManager>  ptr_t;
 
     ///@brief
     ///@{
-public:
     UIManager() = default;
     void setupUI();
     ///@}

@@ -4,6 +4,8 @@
 #include <string>
 #include <exception>
 
+#include "singleton.h"
+
 struct CloseProgramm : public std::exception
 {
 public:

@@ -131,7 +131,7 @@ bool Aliens::moveMissile()
         (m_confMgr->getNumShip() + 2);
     alienshot_counter = alienshot_counter + 10 ;
     // loop all possible missiles
-    GameTable* table = GameTable::getInstance();
+    GameTable::ptr_t table = GameTable::getInstance();
     for (int i = 0; i < ALIENS_MAX_MISSILES; ++i) {
         if (alienshotx[i] != 0) {
             m_uiMgr->aliensMissileClear(alienshotx[i],alienshoty[i]);
