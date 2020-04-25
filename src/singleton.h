@@ -33,5 +33,8 @@ private:
     static object_type_ptr sInstance;
 };
 
+template <typename T>
+std::shared_ptr<T> Singleton<T>::sInstance;
+
 #define SINGLETON( t )      \
 friend class Singleton<t>

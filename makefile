@@ -6,7 +6,7 @@ DOXY       = ./docs/doxy
 OBJECTS    = $(SOURCES:.cpp:=.o)
 EXECUTABLE = ninvaders
 CPPFLAGS   = -O3 -std=c++14
-LDFLAGS    = -lncurses
+LDFLAGS    = -lncurses -lboost_program_options
 
 MOVED_OBJECTS =  $(addprefix $(OBJDIR)/, $(OBJECTS))
 
